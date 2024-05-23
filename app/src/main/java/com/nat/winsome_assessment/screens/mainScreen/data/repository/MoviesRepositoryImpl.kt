@@ -7,10 +7,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class MoviesRepositoryImpl @Inject constructor (
+class MoviesRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : MoviesRepository {
     override fun fetchMoviesList(): Flow<MovieResponse> = flow {
         emit(apiService.getPopularMoviesList())
+    }
+
+    override fun searchOnMovie(query: String) = flow {
+        emit(apiService.searchOnMovie(query = query))
     }
 }

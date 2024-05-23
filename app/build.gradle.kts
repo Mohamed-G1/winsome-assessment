@@ -59,6 +59,7 @@ android {
         debug {
             buildConfigField ("String", "BASE_URL", "\"https://api.themoviedb.org/3/\"")
             buildConfigField ("String", "API_KEY", "\"559e054278572d3fcc40365ebe979d50\"")
+            buildConfigField ("String", "TOKEN", "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NTllMDU0Mjc4NTcyZDNmY2M0MDM2NWViZTk3OWQ1MCIsInN1YiI6IjYwYjQ4Zjg0M2UwOWYzMDA0MDc2N2NjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wS5ohtOC6izPKqysV19DAKuGrlNyQfpY3Lzj7u-xHw0\"")
         }
     }
 }

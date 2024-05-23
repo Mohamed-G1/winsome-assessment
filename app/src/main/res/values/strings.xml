@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">winsome-assessment</string>
+    <string name="imdb">IMDb</string>
+    <string name="movie_app">Movie App</string>
+    <string name="now_showing">Now Showing</string>
+    <string name="search">Search...</string>
 </resources>

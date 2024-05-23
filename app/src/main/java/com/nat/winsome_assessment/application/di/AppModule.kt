@@ -22,24 +22,25 @@ class AppModule {
     fun provideAcceptContentInterceptor(): AcceptContentInterceptor {
         return AcceptContentInterceptor()
     }
-
-    @Provides
-    @Singleton
-    fun provideHttpLogger(): HttpLoggingInterceptor {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-        return interceptor
-    }
+//
+//    @Provides
+//    @Singleton
+//    fun provideHttpLogger(): HttpLoggingInterceptor {
+//        val interceptor = HttpLoggingInterceptor()
+//        interceptor.level = HttpLoggingInterceptor.Level.BODY
+//        return interceptor
+//    }
 
     @Provides
     @Singleton
     fun provideOkHttpClient(
         acceptContentInterceptor: AcceptContentInterceptor,
-        loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
-            .addInterceptor(acceptContentInterceptor)
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(acceptContentInterceptor)
             .build()
     }
 

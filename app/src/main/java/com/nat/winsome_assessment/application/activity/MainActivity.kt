@@ -1,4 +1,4 @@
-package com.nat.winsome_assessment
+package com.nat.winsome_assessment.application.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

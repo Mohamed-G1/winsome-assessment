@@ -6,29 +6,41 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.nat.winsome_assessment.application.data.remote.network.NetworkErrorHandler.Companion.generalState
+import com.nat.winsome_assessment.screens.detailsScreen.presentation.DetailsScreen
+import com.nat.winsome_assessment.screens.mainScreen.domain.models.MovieUiModel
 import com.nat.winsome_assessment.screens.mainScreen.presentation.MainScreen
-import com.nat.winsome_assessment.screens.mainScreen.presentation.MainViewModel
+import com.nat.winsome_assessment.screens.mainScreen.presentation.MainScreenViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
-object MainScreen
+object Main
 
 @Serializable
-data class DetailsScreen(val image: String)
+data class Details(val movieID: Int)
 
 
 @Composable
 fun NavApp(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = MainScreen) {
-        composable<MainScreen> {
-            val generalState = generalState.collectAsStateWithLifecycle()
-            val viewModel: MainViewModel = hiltViewModel()
+    NavHost(navController = navController, startDestination = Main) {
+        composable<Main> {
+            val generalState = generalState.collectAsStateWithLifecycle().value
+            val viewModel: MainScreenViewModel = hiltViewModel()
             val state = viewModel.state.collectAsStateWithLifecycle().value
             MainScreen(
                 state = state,
-                navigateToDetailsScreen = { navController.navigate(DetailsScreen) }
+                event = viewModel::onEvent,
+                generalState = generalState,
+                navigateToDetailsScreen = { id ->
+                    navController.navigate(Details(movieID = id))
+                }
             )
+        }
+
+        composable<Details> {
+            val args = it.toRoute<Details>()
+            DetailsScreen(movieID = args.movieID)
         }
     }
 }
