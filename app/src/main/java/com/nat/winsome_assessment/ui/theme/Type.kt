@@ -1,10 +1,14 @@
 package com.nat.winsome_assessment.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nat.winsome_assessment.R
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -31,4 +35,19 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     )
     */
+)
+
+val largeTitle = TextStyle(
+    fontFamily = FontFamily(Font(R.font.merriweather)),
+    fontSize = 16.sp,
+    color = DarkBlue,
+    fontWeight = FontWeight.Bold,
+
+)
+
+val movieTitleStyle = TextStyle(
+    fontFamily = FontFamily(Font(R.font.mulish)),
+    fontSize = 14.sp,
+    lineHeight = 17.57.sp,
+    fontWeight = FontWeight.Bold
 )

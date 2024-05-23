@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.kotlinParcelize)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -56,8 +57,9 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField ("String", "BASE_URL", "\" \"")
-            buildConfigField ("String", "API_KEY", "\" \"")
+            buildConfigField ("String", "BASE_URL", "\"https://api.themoviedb.org/3/\"")
+            buildConfigField ("String", "API_KEY", "\"559e054278572d3fcc40365ebe979d50\"")
+            buildConfigField ("String", "TOKEN", "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NTllMDU0Mjc4NTcyZDNmY2M0MDM2NWViZTk3OWQ1MCIsInN1YiI6IjYwYjQ4Zjg0M2UwOWYzMDA0MDc2N2NjNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wS5ohtOC6izPKqysV19DAKuGrlNyQfpY3Lzj7u-xHw0\"")
         }
     }
 }
@@ -98,9 +100,13 @@ dependencies {
     //DI
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
 
     //Navigation
     implementation(libs.androidx.navigation)
+    implementation(libs.kotlinx.serialization.json)
+
 
     //Coil
     implementation(libs.coil)
