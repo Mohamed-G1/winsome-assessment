@@ -28,11 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.nat.winsome_assessment.R
+import com.nat.winsome_assessment.application.utils.Constants.IMAGE_URL
 import com.nat.winsome_assessment.ui.theme.SoftGray
 import com.nat.winsome_assessment.ui.theme.movieTitleStyle
 import java.lang.StringBuilder
-
-const val Url = "https://image.tmdb.org/t/p/w500"
 
 @Composable
 fun MovieImageLoader(
@@ -47,7 +46,6 @@ fun MovieImageLoader(
 
     ) {
         Box {
-
             Card(
                 onClick = { onClick?.invoke() },
                 modifier = Modifier
@@ -56,15 +54,16 @@ fun MovieImageLoader(
                 elevation = CardDefaults.outlinedCardElevation(6.dp)
             ) {
                 AsyncImage(
-                    model = "$Url$imageUrl",
+                    model = "$IMAGE_URL$imageUrl",
                     contentDescription = null,
+                    placeholder = painterResource(id = R.drawable.ic_no_photography),
+                    error = painterResource(id = R.drawable.ic_no_photography),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(8.dp))
                 )
             }
-
 
             IconButton(
                 onClick = { /*TODO*/ }, modifier = Modifier

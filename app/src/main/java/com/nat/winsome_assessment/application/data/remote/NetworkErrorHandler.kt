@@ -1,4 +1,4 @@
-package com.nat.winsome_assessment.application.data.remote.network
+package com.nat.winsome_assessment.application.data.remote
 
 import com.nat.winsome_assessment.application.general.GeneralState
 import com.nat.winsome_assessment.application.general.defaultGeneralState

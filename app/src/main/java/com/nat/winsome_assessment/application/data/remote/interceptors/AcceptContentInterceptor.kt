@@ -1,4 +1,4 @@
-package com.nat.winsome_assessment.application.data.remote.network.interceptors
+package com.nat.winsome_assessment.application.data.remote.interceptors
 
 import com.nat.winsome_assessment.BuildConfig
 import okhttp3.Interceptor

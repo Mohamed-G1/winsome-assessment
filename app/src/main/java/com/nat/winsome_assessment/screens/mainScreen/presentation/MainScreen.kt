@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +48,7 @@ import com.nat.winsome_assessment.application.general.HandleGeneralCompose
 import com.nat.winsome_assessment.application.general.defaultGeneralState
 import com.nat.winsome_assessment.application.presentation.Loading
 import com.nat.winsome_assessment.application.presentation.MovieImageLoader
+import com.nat.winsome_assessment.application.utils.toVote
 import com.nat.winsome_assessment.ui.theme.largeTitle
 
 @Composable
@@ -73,8 +75,8 @@ fun ScreenContent(
     generalState: GeneralState,
     navigateToDetailsScreen: ((Int) -> Unit)? = null
 ) {
-    var currentQuery by remember { mutableStateOf("") }
-    var isSearchActive by remember { mutableStateOf(currentQuery.isNotEmpty()) }
+    var currentQuery by rememberSaveable { mutableStateOf("") }
+    var isSearchActive by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
@@ -89,7 +91,7 @@ fun ScreenContent(
                         modifier = Modifier.fillMaxWidth(),
                         style = largeTitle
                     )
-                    // Otherwise open the TextFiled, so the use can search
+                    // Otherwise open the TextFiled, so the user can search
                 } else {
                     TextField(
                         value = currentQuery,
@@ -127,9 +129,10 @@ fun ScreenContent(
                     )
                 }
             },
-                // Toggle between search and cancel actions
+                // Toggle between search and clear search queries actions
                 actions = {
                     if (!isSearchActive) {
+                        // Open search field
                         IconButton(onClick = { isSearchActive = true }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_search),
@@ -137,8 +140,24 @@ fun ScreenContent(
                             )
                         }
                     } else {
-                        IconButton(onClick = { isSearchActive = false }) {
+                        // Clear search queries
+                        IconButton(onClick = { currentQuery = "" }) {
                             Icon(Icons.Default.Close, contentDescription = null)
+                        }
+                    }
+                },
+                navigationIcon = {
+                    // This back button to close the search
+                    if (isSearchActive) {
+                        IconButton(onClick = {
+                            isSearchActive = false
+
+                        }) {
+                            Icon(
+                                painterResource(id = R.drawable.ic_back),
+                                contentDescription = null,
+                                tint = Color.Black
+                            )
                         }
                     }
                 })
@@ -161,13 +180,10 @@ fun ScreenContent(
             ) {
 
                 items(items = state.model ?: emptyList(), key = { it.id ?: 0 }) { movie ->
-                    // This to only extract the first digit instead of the all digits after the number
-                    val rate = String.format("%.1f", movie.rate)
-
                     MovieImageLoader(
                         imageUrl = movie.moviePoster ?: "",
                         title = movie.movieName ?: "",
-                        rate = rate,
+                        rate = movie.rate?.toVote() ?: "",
                         onClick = { navigateToDetailsScreen?.invoke(movie.id ?: 0) }
                     )
                 }

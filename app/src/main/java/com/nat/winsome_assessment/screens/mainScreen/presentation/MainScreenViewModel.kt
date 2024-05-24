@@ -2,8 +2,8 @@ package com.nat.winsome_assessment.screens.mainScreen.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nat.winsome_assessment.application.data.remote.network.NetworkErrorHandler.Companion.handleNetworkError
-import com.nat.winsome_assessment.application.data.remote.network.NetworkErrorHandler.Companion.resetGeneralState
+import com.nat.winsome_assessment.application.data.remote.NetworkErrorHandler.Companion.handleNetworkError
+import com.nat.winsome_assessment.application.data.remote.NetworkErrorHandler.Companion.resetGeneralState
 import com.nat.winsome_assessment.screens.mainScreen.domain.models.toMovieUiModel
 import com.nat.winsome_assessment.screens.mainScreen.domain.useCases.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +23,7 @@ class MainScreenViewModel @Inject constructor(
 
     init {
         resetGeneralState()
-        getMovies()
+        callPopularMoviesApi()
     }
 
 
@@ -32,12 +32,17 @@ class MainScreenViewModel @Inject constructor(
             is MainScreenEvent.SearchOnMovie -> {
                 // Call the search api
                 resetGeneralState()
-                searchOnMovie(event.query)
+                callSearchOnMovieApi(event.query)
+            }
+
+            is MainScreenEvent.PopularMovies -> {
+                resetGeneralState()
+                callPopularMoviesApi()
             }
         }
     }
 
-    private fun searchOnMovie(query: String) {
+    private fun callSearchOnMovieApi(query: String) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             useCases.searchOnMovieUseCase.invoke(query = query)
@@ -46,12 +51,17 @@ class MainScreenViewModel @Inject constructor(
                         it.copy(isLoading = false)
                     }
                 }).collectLatest { response ->
-                    _state.update { it.copy(model = response.results?.toMovieUiModel(), isLoading = false) }
+                    _state.update {
+                        it.copy(
+                            model = response.results?.toMovieUiModel(),
+                            isLoading = false
+                        )
+                    }
                 }
         }
     }
 
-    private fun getMovies() {
+    private fun callPopularMoviesApi() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             useCases.getMoviesListUseCase.invoke().handleNetworkError(onHandlingFinished = {
@@ -59,7 +69,12 @@ class MainScreenViewModel @Inject constructor(
                     it.copy(isLoading = false)
                 }
             }).collectLatest { response ->
-                _state.update { it.copy(model = response.results?.toMovieUiModel(), isLoading = false) }
+                _state.update {
+                    it.copy(
+                        model = response.results?.toMovieUiModel(),
+                        isLoading = false
+                    )
+                }
             }
         }
     }

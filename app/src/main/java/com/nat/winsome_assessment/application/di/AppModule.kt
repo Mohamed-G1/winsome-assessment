@@ -1,8 +1,8 @@
 package com.nat.winsome_assessment.application.di
 
 import com.nat.winsome_assessment.BuildConfig
-import com.nat.winsome_assessment.application.data.remote.network.ApiService
-import com.nat.winsome_assessment.application.data.remote.network.interceptors.AcceptContentInterceptor
+import com.nat.winsome_assessment.application.data.remote.ApiService
+import com.nat.winsome_assessment.application.data.remote.interceptors.AcceptContentInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
