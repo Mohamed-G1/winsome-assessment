@@ -1,6 +1,6 @@
 package com.nat.winsome_assessment.screens.mainScreen.data.repository
 
-import com.nat.winsome_assessment.application.data.remote.network.ApiService
+import com.nat.winsome_assessment.application.data.remote.ApiService
 import com.nat.winsome_assessment.screens.mainScreen.domain.models.MovieResponse
 import com.nat.winsome_assessment.screens.mainScreen.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow

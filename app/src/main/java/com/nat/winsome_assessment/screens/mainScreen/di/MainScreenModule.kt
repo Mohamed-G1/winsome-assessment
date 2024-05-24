@@ -4,6 +4,7 @@ import com.nat.winsome_assessment.screens.mainScreen.data.repository.MoviesRepos
 import com.nat.winsome_assessment.screens.mainScreen.domain.repository.MoviesRepository
 import com.nat.winsome_assessment.screens.mainScreen.domain.useCases.GetMoviesListUseCase
 import com.nat.winsome_assessment.screens.mainScreen.domain.useCases.SearchOnMovieUseCase
+import com.nat.winsome_assessment.screens.mainScreen.domain.useCases.UseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +31,14 @@ class MainScreenModule {
     @Singleton
     fun provideSearchOnMovieUseCase(moviesRepository: MoviesRepository): SearchOnMovieUseCase {
         return SearchOnMovieUseCase(moviesRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUseCases(
+        getMoviesListUseCase: GetMoviesListUseCase,
+        searchOnMovieUseCase: SearchOnMovieUseCase
+    ): UseCases {
+        return UseCases(getMoviesListUseCase, searchOnMovieUseCase)
     }
 }

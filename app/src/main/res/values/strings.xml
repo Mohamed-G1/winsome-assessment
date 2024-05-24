@@ -4,4 +4,10 @@
     <string name="movie_app">Movie App</string>
     <string name="now_showing">Now Showing</string>
     <string name="search">Search...</string>
+    <string name="description">Description</string>
+    <string name="cast">Cast</string>
+    <string name="favorites_list">Favorites List</string>
+    <string name="length">Length</string>
+    <string name="language">Language</string>
+    <string name="rating">Rating</string>
 </resources>

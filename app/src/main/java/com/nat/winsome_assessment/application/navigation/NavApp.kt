@@ -7,9 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.nat.winsome_assessment.application.data.remote.network.NetworkErrorHandler.Companion.generalState
-import com.nat.winsome_assessment.screens.detailsScreen.presentation.DetailsScreen
-import com.nat.winsome_assessment.screens.mainScreen.domain.models.MovieUiModel
+import com.nat.winsome_assessment.application.data.remote.NetworkErrorHandler.Companion.generalState
+import com.nat.winsome_assessment.screens.detailsScreen.presentation.MovieDetailsScreen
+import com.nat.winsome_assessment.screens.detailsScreen.presentation.MovieDetailsViewModel
 import com.nat.winsome_assessment.screens.mainScreen.presentation.MainScreen
 import com.nat.winsome_assessment.screens.mainScreen.presentation.MainScreenViewModel
 import kotlinx.serialization.Serializable
@@ -40,7 +40,17 @@ fun NavApp(navController: NavHostController) {
 
         composable<Details> {
             val args = it.toRoute<Details>()
-            DetailsScreen(movieID = args.movieID)
+            val viewModel: MovieDetailsViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsStateWithLifecycle().value
+            val generalState = generalState.collectAsStateWithLifecycle().value
+            MovieDetailsScreen(
+                state = state,
+                generalState = generalState,
+                event = viewModel::onEvent,
+                movieID = args.movieID,
+                navigateToFavorites = {},
+                navigateBack = { navController.navigateUp() }
+            )
         }
     }
 }
