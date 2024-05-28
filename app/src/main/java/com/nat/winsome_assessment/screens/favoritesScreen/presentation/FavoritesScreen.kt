@@ -1,17 +1,19 @@
 package com.nat.winsome_assessment.screens.favoritesScreen.presentation
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -36,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -49,12 +50,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.nat.winsome_assessment.R
 import com.nat.winsome_assessment.application.data.local.db.entity.toUiModel
 import com.nat.winsome_assessment.application.presentation.MovieImageLoader
 import com.nat.winsome_assessment.application.presentation.general.StatusBarIconColoring
-import com.nat.winsome_assessment.ui.theme.SoftGray
 import com.nat.winsome_assessment.ui.theme.largeTitle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -76,7 +75,7 @@ fun FavoritesScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 private fun ScreenContent(
     state: FavoritesState,
@@ -106,7 +105,7 @@ private fun ScreenContent(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(55.dp)
+                            .wrapContentHeight()
                             .padding(horizontal = 16.dp)
                             .border(
                                 0.3.dp,
@@ -149,6 +148,8 @@ private fun ScreenContent(
                         IconButton(onClick = {
                             currentQuery = ""
                             isSearchActive = false
+                            // Return to the stored movie list
+                            event?.invoke(FavoritesEvent.SearchClosed)
                         }) {
                             Icon(Icons.Default.Close, contentDescription = null)
                         }
@@ -178,42 +179,34 @@ private fun ScreenContent(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            if (state.storedMovies.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        text = stringResource(R.string.no_favourite_movies),
-                        style = largeTitle.copy(fontSize = 32.sp, color = SoftGray),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Center),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.spacedBy(24.dp),
-                ) {
-                    items(items = state.storedMovies, key = { entity -> entity.id }) { movie ->
-                        var isVisible by remember { mutableStateOf(true) }
-                        val scope = rememberCoroutineScope()
-                        AnimatedVisibility(
-                            visible = isVisible,
-                            enter = fadeIn(animationSpec = tween(500)),
-                            exit = fadeOut(animationSpec = tween(500))
-                        ) {
+            val scope = rememberCoroutineScope()
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                items(items = state.storedMovies, key = { entity -> entity.id }) { movie ->
+                    var isVisible by remember { mutableStateOf(true) }
+                    AnimatedVisibility(
+                        visible = isVisible,
+                        enter = fadeIn(animationSpec = tween(1000)),
+                        exit = fadeOut(animationSpec = tween(1000))
+                    ) {
+                        AnimatedContent(
+                            targetState = movie,
+                            transitionSpec = {
+                                fadeIn(animationSpec = tween(1000)) togetherWith fadeOut(animationSpec = tween(1000))
+                            }, label = ""
+                        ) { targetMovie ->
                             MovieImageLoader(
-                                model = movie.toUiModel(),
-                                onClick = {},
+                                model = targetMovie.toUiModel(),
                                 onSaveClick = {
                                     isVisible = false
                                     // Delay the deletion to allow the animation to play
                                     scope.launch {
-                                        delay(300)
-                                        event?.invoke(FavoritesEvent.DeleteMovie(movie = movie.toUiModel()))
+                                        delay(1000)
+                                        event?.invoke(FavoritesEvent.DeleteMovie(movie = targetMovie.toUiModel()))
                                     }
                                 },
                                 isMovieSaved = isSaved

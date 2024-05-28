@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -100,7 +100,7 @@ fun ScreenContent(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(55.dp)
+                            .wrapContentHeight()
                             .padding(horizontal = 16.dp)
                             .border(
                                 0.3.dp,
@@ -140,10 +140,15 @@ fun ScreenContent(
                 // Toggle between search and clear search queries actions
                 actions = {
                     if (isSearchActive) {
-                        // Clear search queries
+                        // Clear search queries and return to the popular movie list
                         IconButton(onClick = {
-                            currentQuery = ""
-                            isSearchActive = false
+                            if (currentQuery.isNotBlank()) {
+                                currentQuery = ""
+                                isSearchActive = false
+                                event?.invoke(MainScreenEvent.GetPopularMovies)
+                            } else {
+                                isSearchActive = false
+                            }
                         }) {
                             Icon(Icons.Default.Close, contentDescription = null)
                         }
@@ -157,32 +162,8 @@ fun ScreenContent(
                             )
                         }
                     }
-                },
-                navigationIcon = {
-                    // This back button return to the popular movies
-                    if (isSearchActive) {
-                        /**if there is a search query, in this case close and remove search and call popular movies,
-                         * else close the search without calling the api
-                         * This logic to prevent the unnecessary api calls
-                         */
-                        IconButton(
-                            onClick = {
-                                if (currentQuery.isNotBlank()){
-                                    currentQuery = ""
-                                    isSearchActive = false
-                                    event?.invoke(MainScreenEvent.GetPopularMovies)
-                                }else{
-                                    isSearchActive = false
-                                }
-                            }) {
-                            Icon(
-                                painterResource(id = R.drawable.ic_back),
-                                contentDescription = null,
-                                tint = Color.Black
-                            )
-                        }
-                    }
-                })
+                }
+            )
         }
     ) {
         if (state.isLoading) {
