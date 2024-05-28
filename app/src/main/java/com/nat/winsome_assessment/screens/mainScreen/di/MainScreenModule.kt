@@ -4,7 +4,7 @@ import com.nat.winsome_assessment.screens.mainScreen.data.repository.MoviesRepos
 import com.nat.winsome_assessment.screens.mainScreen.domain.repository.MoviesRepository
 import com.nat.winsome_assessment.screens.mainScreen.domain.useCases.GetMoviesListUseCase
 import com.nat.winsome_assessment.screens.mainScreen.domain.useCases.SearchOnMovieUseCase
-import com.nat.winsome_assessment.screens.mainScreen.domain.useCases.UseCases
+import com.nat.winsome_assessment.screens.mainScreen.domain.useCases.MainScreenUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class MainScreenModule {
+object MainScreenModule {
     @Provides
     @Singleton
     fun provideMoviesRepository(moviesRepositoryImpl: MoviesRepositoryImpl): MoviesRepository {
@@ -23,22 +23,12 @@ class MainScreenModule {
 
     @Provides
     @Singleton
-    fun provideGetMoviesListUseCase(moviesRepository: MoviesRepository): GetMoviesListUseCase {
-        return GetMoviesListUseCase(moviesRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideSearchOnMovieUseCase(moviesRepository: MoviesRepository): SearchOnMovieUseCase {
-        return SearchOnMovieUseCase(moviesRepository)
-    }
-
-    @Provides
-    @Singleton
     fun provideUseCases(
-        getMoviesListUseCase: GetMoviesListUseCase,
-        searchOnMovieUseCase: SearchOnMovieUseCase
-    ): UseCases {
-        return UseCases(getMoviesListUseCase, searchOnMovieUseCase)
+        moviesRepository: MoviesRepository
+    ): MainScreenUseCases {
+        return MainScreenUseCases(
+            GetMoviesListUseCase(moviesRepository),
+            SearchOnMovieUseCase(moviesRepository)
+        )
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">winsome-assessment</string>
+    <string name="app_name">Movie App</string>
     <string name="imdb">IMDb</string>
     <string name="movie_app">Movie App</string>
     <string name="now_showing">Now Showing</string>
@@ -10,4 +10,5 @@
     <string name="length">Length</string>
     <string name="language">Language</string>
     <string name="rating">Rating</string>
+    <string name="no_favourite_movies">No favourite movies</string>
 </resources>

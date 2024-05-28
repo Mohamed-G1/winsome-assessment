@@ -1,4 +1,4 @@
-package com.nat.winsome_assessment.application.general
+package com.nat.winsome_assessment.application.presentation.general
 
 sealed class GeneralState {
 

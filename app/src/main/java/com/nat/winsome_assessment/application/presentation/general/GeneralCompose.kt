@@ -1,4 +1,4 @@
-package com.nat.winsome_assessment.application.general
+package com.nat.winsome_assessment.application.presentation.general
 
 import androidx.compose.runtime.Composable
 import com.nat.winsome_assessment.application.utils.ShowToast

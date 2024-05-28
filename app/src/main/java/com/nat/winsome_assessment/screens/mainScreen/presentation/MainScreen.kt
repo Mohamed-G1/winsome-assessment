@@ -25,6 +25,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,27 +44,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nat.winsome_assessment.R
-import com.nat.winsome_assessment.application.general.GeneralState
-import com.nat.winsome_assessment.application.general.HandleGeneralCompose
-import com.nat.winsome_assessment.application.general.defaultGeneralState
 import com.nat.winsome_assessment.application.presentation.Loading
 import com.nat.winsome_assessment.application.presentation.MovieImageLoader
-import com.nat.winsome_assessment.application.utils.toVote
+import com.nat.winsome_assessment.application.presentation.general.GeneralState
+import com.nat.winsome_assessment.application.presentation.general.HandleGeneralCompose
+import com.nat.winsome_assessment.application.presentation.general.StatusBarIconColoring
+import com.nat.winsome_assessment.application.presentation.general.defaultGeneralState
 import com.nat.winsome_assessment.ui.theme.largeTitle
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun MainScreen(
     state: MainScreenState,
     event: ((MainScreenEvent) -> Unit)? = null,
     generalState: GeneralState,
-    navigateToDetailsScreen: ((Int) -> Unit)? = null
+    navigateToDetailsScreen: ((Int) -> Unit)? = null,
+    checkIsMovieSaved: ((Int) -> Flow<Boolean>)? = null
 ) {
+    StatusBarIconColoring(showAsDarkIcons = true)
     ScreenContent(
         state = state,
         event = event,
         generalState = generalState,
-        navigateToDetailsScreen = navigateToDetailsScreen
+        navigateToDetailsScreen = navigateToDetailsScreen,
+        checkIsMovieSaved = checkIsMovieSaved
     )
+
 }
 
 @SuppressLint("DefaultLocale")
@@ -73,7 +79,9 @@ fun ScreenContent(
     state: MainScreenState,
     event: ((MainScreenEvent) -> Unit)? = null,
     generalState: GeneralState,
-    navigateToDetailsScreen: ((Int) -> Unit)? = null
+    navigateToDetailsScreen: ((Int) -> Unit)? = null,
+    checkIsMovieSaved: ((Int) -> Flow<Boolean>)? = null
+
 ) {
     var currentQuery by rememberSaveable { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
@@ -83,16 +91,8 @@ fun ScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(title = {
-                // If the search is not active show the App name
-                if (!isSearchActive) {
-                    Text(
-                        text = stringResource(R.string.movie_app),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                        style = largeTitle
-                    )
-                    // Otherwise open the TextFiled, so the user can search
-                } else {
+                // If the search is active show the search bar
+                if (isSearchActive) {
                     TextField(
                         value = currentQuery,
                         onValueChange = { newQuery ->
@@ -127,11 +127,28 @@ fun ScreenContent(
                             keyboardController?.hide()
                         })
                     )
+                    // Otherwise open show app name
+                } else {
+                    Text(
+                        text = stringResource(R.string.movie_app),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = largeTitle
+                    )
                 }
             },
                 // Toggle between search and clear search queries actions
                 actions = {
-                    if (!isSearchActive) {
+                    if (isSearchActive) {
+                        // Clear search queries
+                        IconButton(onClick = {
+                            currentQuery = ""
+                            isSearchActive = false
+                        }) {
+                            Icon(Icons.Default.Close, contentDescription = null)
+                        }
+
+                    } else {
                         // Open search field
                         IconButton(onClick = { isSearchActive = true }) {
                             Icon(
@@ -139,20 +156,25 @@ fun ScreenContent(
                                 contentDescription = null
                             )
                         }
-                    } else {
-                        // Clear search queries
-                        IconButton(onClick = { currentQuery = "" }) {
-                            Icon(Icons.Default.Close, contentDescription = null)
-                        }
                     }
                 },
                 navigationIcon = {
-                    // This back button to close the search
+                    // This back button return to the popular movies
                     if (isSearchActive) {
-                        IconButton(onClick = {
-                            isSearchActive = false
-
-                        }) {
+                        /**if there is a search query, in this case close and remove search and call popular movies,
+                         * else close the search without calling the api
+                         * This logic to prevent the unnecessary api calls
+                         */
+                        IconButton(
+                            onClick = {
+                                if (currentQuery.isNotBlank()){
+                                    currentQuery = ""
+                                    isSearchActive = false
+                                    event?.invoke(MainScreenEvent.GetPopularMovies)
+                                }else{
+                                    isSearchActive = false
+                                }
+                            }) {
                             Icon(
                                 painterResource(id = R.drawable.ic_back),
                                 contentDescription = null,
@@ -163,36 +185,40 @@ fun ScreenContent(
                 })
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            Text(
-                text = stringResource(R.string.now_showing),
-                style = largeTitle,
-                modifier = Modifier.padding(top = 16.dp, start = 16.dp)
-            )
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(24.dp),
+        if (state.isLoading) {
+            Loading()
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
             ) {
-
-                items(items = state.model ?: emptyList(), key = { it.id ?: 0 }) { movie ->
-                    MovieImageLoader(
-                        imageUrl = movie.moviePoster ?: "",
-                        title = movie.movieName ?: "",
-                        rate = movie.rate?.toVote() ?: "",
-                        onClick = { navigateToDetailsScreen?.invoke(movie.id ?: 0) }
-                    )
+                Text(
+                    text = stringResource(R.string.now_showing),
+                    style = largeTitle,
+                    modifier = Modifier.padding(top = 16.dp, start = 16.dp)
+                )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    items(items = state.model ?: emptyList(), key = { it.id ?: 0 }) { movie ->
+                        // Check if the movie is exists in the DB
+                        val isSaved = checkIsMovieSaved?.invoke(movie.id ?: 0)
+                            ?.collectAsState(initial = false)?.value ?: false
+                        MovieImageLoader(
+                            model = movie,
+                            onClick = { navigateToDetailsScreen?.invoke(movie.id ?: 0) },
+                            onSaveClick = {
+                                event?.invoke(MainScreenEvent.AddAndDeleteMovie(movie = movie))
+                            },
+                            isMovieSaved = isSaved
+                        )
+                    }
                 }
             }
         }
-    }
-
-    if (state.isLoading) {
-        Loading()
     }
     HandleGeneralCompose(state = generalState)
 }

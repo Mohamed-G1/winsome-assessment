@@ -4,7 +4,7 @@ import com.nat.winsome_assessment.screens.detailsScreen.data.repository.MovieDet
 import com.nat.winsome_assessment.screens.detailsScreen.domain.repository.MovieDetailsRepository
 import com.nat.winsome_assessment.screens.detailsScreen.domain.useCases.GetMovieCastUseCase
 import com.nat.winsome_assessment.screens.detailsScreen.domain.useCases.GetMovieDetailsUseCase
-import com.nat.winsome_assessment.screens.detailsScreen.domain.useCases.UseCases
+import com.nat.winsome_assessment.screens.detailsScreen.domain.useCases.DetailsScreenUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class MovieDetailsModule {
+object MovieDetailsModule {
 
     @Provides
     @Singleton
@@ -24,23 +24,12 @@ class MovieDetailsModule {
 
     @Provides
     @Singleton
-    fun provideGetMoviesDetailsUseCase(movieDetailsRepository: MovieDetailsRepository): GetMovieDetailsUseCase {
-        return GetMovieDetailsUseCase(movieDetailsRepository)
-    }
-
-
-    @Provides
-    @Singleton
-    fun provideGetMoviesCastsUseCase(movieDetailsRepository: MovieDetailsRepository): GetMovieCastUseCase {
-        return GetMovieCastUseCase(movieDetailsRepository)
-    }
-    @Provides
-    @Singleton
     fun provideUseCases(
-        getMovieDetailsUseCase: GetMovieDetailsUseCase,
-        getMovieCastUseCase: GetMovieCastUseCase
-    ): UseCases{
-        return UseCases(getMovieDetailsUseCase, getMovieCastUseCase)
+        movieDetailsRepository: MovieDetailsRepository
+    ): DetailsScreenUseCases {
+        return DetailsScreenUseCases(
+            GetMovieDetailsUseCase(movieDetailsRepository),
+            GetMovieCastUseCase(movieDetailsRepository)
+        )
     }
-
 }

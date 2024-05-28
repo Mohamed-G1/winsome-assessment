@@ -1,4 +1,4 @@
-package com.nat.winsome_assessment.application.di
+package com.nat.winsome_assessment.application.data.remote.di
 
 import com.nat.winsome_assessment.BuildConfig
 import com.nat.winsome_assessment.application.data.remote.ApiService
@@ -15,21 +15,14 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
+object NetworkModule {
 
     @Provides
     @Singleton
     fun provideAcceptContentInterceptor(): AcceptContentInterceptor {
         return AcceptContentInterceptor()
     }
-//
-//    @Provides
-//    @Singleton
-//    fun provideHttpLogger(): HttpLoggingInterceptor {
-//        val interceptor = HttpLoggingInterceptor()
-//        interceptor.level = HttpLoggingInterceptor.Level.BODY
-//        return interceptor
-//    }
+
 
     @Provides
     @Singleton
