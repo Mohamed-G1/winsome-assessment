@@ -117,4 +117,21 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    //For App Theme
+    implementation(libs.google.accompanist.pager)
+    implementation(libs.google.accompanist.system)
+
+    //Test
+    testImplementation(libs.hilt.android.testing)
+    kspTest(libs.hilt.android.compiler.v2405)
+    testImplementation (libs.kotlinx.coroutines.test)
+    // AndroidX Test - Core and Rules
+    testImplementation (libs.androidx.core.testing)
+    testImplementation (libs.androidx.core)
+    testImplementation (libs.androidx.rules)
+    // Truth
+    testImplementation(libs.truth)
+
+
 }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Query
 import javax.inject.Inject
 
-class SearchOnMovieUseCase @Inject constructor(
+class SearchOnMovieUseCase (
     private val repository: MoviesRepository
 
 ) {

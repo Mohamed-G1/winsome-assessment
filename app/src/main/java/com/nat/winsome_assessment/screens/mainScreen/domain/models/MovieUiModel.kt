@@ -1,7 +1,6 @@
 package com.nat.winsome_assessment.screens.mainScreen.domain.models
 
 
-
 data class MovieUiModel(
     val id: Int?,
     val movieName: String?,
@@ -18,7 +17,6 @@ fun List<MoviesList>.toMovieUiModel(): List<MovieUiModel> {
             moviePoster = movie.posterPath,
             movieDescription = movie.overview,
             rate = movie.voteAverage
-
         )
     }
 }

@@ -5,7 +5,7 @@ import com.nat.winsome_assessment.screens.mainScreen.domain.repository.MoviesRep
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetMoviesListUseCase @Inject constructor(
+class GetMoviesListUseCase (
      private val repository: MoviesRepository
  ){
     // by adding operator to the function we are able to call the function by class name

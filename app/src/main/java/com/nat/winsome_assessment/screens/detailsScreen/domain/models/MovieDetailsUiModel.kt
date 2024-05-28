@@ -1,6 +1,7 @@
 package com.nat.winsome_assessment.screens.detailsScreen.domain.models
 
 data class MovieDetailsUiModel(
+    val movieId : Int?,
     val movieName: String?,
     val rate: Double?,
     val language: String?,
@@ -13,6 +14,7 @@ data class MovieDetailsUiModel(
 
 fun MovieDetailsResponse.toMovieDetailsUiModel(): MovieDetailsUiModel {
     return MovieDetailsUiModel(
+        movieId = this.id,
         movieName = this.title,
         rate = this.voteAverage,
         language = this.spokenLanguages?.firstOrNull()?.englishName,

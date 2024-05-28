@@ -10,6 +10,8 @@ import androidx.navigation.toRoute
 import com.nat.winsome_assessment.application.data.remote.NetworkErrorHandler.Companion.generalState
 import com.nat.winsome_assessment.screens.detailsScreen.presentation.MovieDetailsScreen
 import com.nat.winsome_assessment.screens.detailsScreen.presentation.MovieDetailsViewModel
+import com.nat.winsome_assessment.screens.favoritesScreen.presentation.FavoritesScreen
+import com.nat.winsome_assessment.screens.favoritesScreen.presentation.FavoritesViewModel
 import com.nat.winsome_assessment.screens.mainScreen.presentation.MainScreen
 import com.nat.winsome_assessment.screens.mainScreen.presentation.MainScreenViewModel
 import kotlinx.serialization.Serializable
@@ -18,22 +20,32 @@ import kotlinx.serialization.Serializable
 object Main
 
 @Serializable
-data class Details(val movieID: Int)
+data class Details(val movieId: Int)
+
+@Serializable
+object Favorites
 
 
 @Composable
 fun NavApp(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Main) {
+    NavHost(
+        navController = navController,
+        startDestination = Main
+    ) {
         composable<Main> {
             val generalState = generalState.collectAsStateWithLifecycle().value
             val viewModel: MainScreenViewModel = hiltViewModel()
             val state = viewModel.state.collectAsStateWithLifecycle().value
+
             MainScreen(
                 state = state,
                 event = viewModel::onEvent,
                 generalState = generalState,
                 navigateToDetailsScreen = { id ->
-                    navController.navigate(Details(movieID = id))
+                    navController.navigate(Details(movieId = id))
+                },
+                checkIsMovieSaved = { id ->
+                    viewModel.isMovieSaved(movieId = id)
                 }
             )
         }
@@ -47,8 +59,25 @@ fun NavApp(navController: NavHostController) {
                 state = state,
                 generalState = generalState,
                 event = viewModel::onEvent,
-                movieID = args.movieID,
-                navigateToFavorites = {},
+                movieId = args.movieId,
+                checkIsMovieSaved = { id ->
+                    viewModel.isMovieSaved(movieId = id)
+                },
+                navigateToFavorites = { navController.navigate(Favorites) },
+                navigateBack = { navController.navigateUp() }
+            )
+        }
+
+
+        composable<Favorites> {
+            val viewModel: FavoritesViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsStateWithLifecycle().value
+            FavoritesScreen(
+                state = state,
+                event = viewModel::onEvent,
+                checkIsMovieSaved = { id ->
+                    viewModel.isMovieSaved(movieId = id)
+                },
                 navigateBack = { navController.navigateUp() }
             )
         }

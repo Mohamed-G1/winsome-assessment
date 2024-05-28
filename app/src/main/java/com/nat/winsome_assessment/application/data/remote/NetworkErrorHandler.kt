@@ -1,7 +1,7 @@
 package com.nat.winsome_assessment.application.data.remote
 
-import com.nat.winsome_assessment.application.general.GeneralState
-import com.nat.winsome_assessment.application.general.defaultGeneralState
+import com.nat.winsome_assessment.application.presentation.general.GeneralState
+import com.nat.winsome_assessment.application.presentation.general.defaultGeneralState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
